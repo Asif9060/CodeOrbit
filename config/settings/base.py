@@ -83,19 +83,64 @@ ASGI_APPLICATION = "config.asgi.application"
 
 
 # ─── Database (MySQL) ─────────────────────────────────────────────────────────
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "OPTIONS": {
-            "read_default_file": str(BASE_DIR / "my.cnf"),
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-            "isolation_level": "read committed",
-            "charset": "utf8mb4",
-        },
-        "CONN_MAX_AGE": 60,
-        "CONN_HEALTH_CHECKS": True,
+DB_HOST = config("DB_HOST", default="")
+DB_NAME = config("DB_NAME", default="")
+DB_USER = config("DB_USER", default="")
+DB_PASSWORD = config("DB_PASSWORD", default="")
+DB_PORT = config("DB_PORT", default="3306")
+DB_SSL_CA = config("DB_SSL_CA", default="")
+
+
+def _build_db_ssl_options():
+    if not DB_SSL_CA:
+        return None
+
+    if "BEGIN CERTIFICATE" in DB_SSL_CA:
+        ca_path = Path("/tmp/aiven-mysql-ca.pem")
+        if not ca_path.exists():
+            ca_path.write_text(DB_SSL_CA.strip() + "\n", encoding="utf-8")
+        return {"ca": str(ca_path)}
+
+    return {"ca": DB_SSL_CA}
+
+
+if DB_HOST:
+    ssl_options = _build_db_ssl_options()
+    db_options = {
+        "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        "isolation_level": "read committed",
+        "charset": "utf8mb4",
     }
-}
+    if ssl_options:
+        db_options["ssl"] = ssl_options
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": DB_NAME,
+            "USER": DB_USER,
+            "PASSWORD": DB_PASSWORD,
+            "HOST": DB_HOST,
+            "PORT": DB_PORT,
+            "OPTIONS": db_options,
+            "CONN_MAX_AGE": 60,
+            "CONN_HEALTH_CHECKS": True,
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "OPTIONS": {
+                "read_default_file": str(BASE_DIR / "my.cnf"),
+                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+                "isolation_level": "read committed",
+                "charset": "utf8mb4",
+            },
+            "CONN_MAX_AGE": 60,
+            "CONN_HEALTH_CHECKS": True,
+        }
+    }
 
 
 # ─── Authentication ───────────────────────────────────────────────────────────
