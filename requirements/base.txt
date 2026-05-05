@@ -4,6 +4,7 @@ mysqlclient>=2.2.0
 python-decouple==3.8
 Pillow>=10.0.0
 gunicorn>=21.2.0
+whitenoise>=6.6.0
 
 # Authentication
 django-allauth>=65.0.0
