@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.accounts",
     "apps.languages",
+    "apps.learn",
     "apps.quizzes",
     "apps.results",
     "apps.leaderboard",
@@ -108,8 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = "accounts:login"
-LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "core:home"
+LOGOUT_REDIRECT_URL = "core:home"
 
 # ─── Internationalization ─────────────────────────────────────────────────────
 LANGUAGE_CODE = "en-us"
@@ -166,8 +167,8 @@ INTERNAL_IPS = ["127.0.0.1"]
 from django.urls import reverse_lazy
 
 UNFOLD = {
-    "SITE_TITLE": "Quiz CodeX",
-    "SITE_HEADER": "Quiz CodeX Admin",
+    "SITE_TITLE": "CodeOrbit",
+    "SITE_HEADER": "CodeOrbit Admin",
     "SITE_URL": "/",
     "SITE_ICON": None,
     "SITE_SYMBOL": "quiz",
@@ -219,6 +220,16 @@ UNFOLD = {
                         "title": "Languages",
                         "icon": "code",
                         "link": reverse_lazy("admin:languages_language_changelist"),
+                    },
+                    {
+                        "title": "Topics",
+                        "icon": "menu_book",
+                        "link": reverse_lazy("admin:learn_topic_changelist"),
+                    },
+                    {
+                        "title": "Topic Progress",
+                        "icon": "track_changes",
+                        "link": reverse_lazy("admin:learn_topicprogress_changelist"),
                     },
                     {
                         "title": "Quizzes",

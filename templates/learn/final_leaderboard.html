@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ language.name }} Final Leaderboard{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 lg:px-8 py-12">
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-xs font-medium mb-4">
+      <span class="material-symbols-rounded text-xs">emoji_events</span>
+      Final Quiz
+    </div>
+    <h1 class="text-3xl font-extrabold mb-2">{{ language.name }} Leaderboard</h1>
+    <p class="text-base-content/50">Top scores for the final assessment</p>
+  </div>
+
+  {% if leaders %}
+  <div class="flex items-end justify-center gap-4 mb-10">
+    <div class="podium-card podium-2nd flex-1 max-w-[160px]">
+      <div class="text-xs uppercase tracking-widest text-base-content/40 mb-1">2nd</div>
+      <div class="font-bold text-sm text-center truncate max-w-full">{{ podium.1.username }}</div>
+      <div class="text-xs text-base-content/50 font-mono">{{ podium.1.total_score }} pts</div>
+      <div class="w-full h-12 mt-2 bg-slate-400/20 rounded-t-lg flex items-center justify-center">
+        <span class="text-2xl font-black text-slate-400">2</span>
+      </div>
+    </div>
+
+    <div class="podium-card podium-1st flex-1 max-w-[180px]">
+      <div class="badge badge-xs bg-amber-500/20 text-amber-400 border-amber-500/30 mb-2">Champion</div>
+      <div class="text-xs uppercase tracking-widest text-base-content/40 mb-1">1st</div>
+      <div class="font-bold text-sm text-center truncate max-w-full">{{ podium.0.username }}</div>
+      <div class="text-xs text-amber-400/80 font-mono font-bold">{{ podium.0.total_score }} pts</div>
+      <div class="w-full h-20 mt-2 bg-amber-500/20 rounded-t-lg flex items-center justify-center">
+        <span class="text-3xl font-black text-amber-400">1</span>
+      </div>
+    </div>
+
+    <div class="podium-card podium-3rd flex-1 max-w-[160px]">
+      <div class="text-xs uppercase tracking-widest text-base-content/40 mb-1">3rd</div>
+      <div class="font-bold text-sm text-center truncate max-w-full">{{ podium.2.username }}</div>
+      <div class="text-xs text-base-content/50 font-mono">{{ podium.2.total_score }} pts</div>
+      <div class="w-full h-8 mt-2 bg-amber-700/20 rounded-t-lg flex items-center justify-center">
+        <span class="text-xl font-black text-amber-700">3</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rounded-xl border border-surface-border bg-base-200 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="table w-full">
+        <thead>
+          <tr class="bg-base-300 text-base-content/50 text-xs uppercase tracking-wider">
+            <th class="w-14 text-center">#</th>
+            <th>Player</th>
+            <th class="hidden sm:table-cell">Attempts</th>
+            <th class="text-right">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for leader in leaders %}
+          <tr class="border-t border-surface-border hover:bg-base-300 transition-colors">
+            <td class="text-center font-mono font-bold">{{ leader.rank }}</td>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="avatar placeholder">
+                  <div class="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold flex items-center justify-center">
+                    {{ leader.username|first|upper }}
+                  </div>
+                </div>
+                <div class="font-semibold text-sm">{{ leader.username }}</div>
+              </div>
+            </td>
+            <td class="hidden sm:table-cell text-sm text-base-content/50">{{ leader.quizzes }}</td>
+            <td class="text-right">
+              <span class="font-mono font-bold text-primary">{{ leader.total_score }}</span>
+              <span class="text-xs text-base-content/30 ml-1">pts</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="rounded-2xl border border-surface-border bg-base-200 p-10 text-center text-base-content/40">
+    No final quiz results yet.
+  </div>
+  {% endif %}
+
+  <div class="mt-8 flex justify-center">
+    <a href="{% url 'learn:language_detail' language_slug=language.slug %}" class="btn btn-ghost btn-sm gap-2">
+      <span class="material-symbols-rounded text-sm">arrow_back</span>
+      Back to learning path
+    </a>
+  </div>
+</div>
+{% endblock %}

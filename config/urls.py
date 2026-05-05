@@ -17,6 +17,9 @@ urlpatterns = [
     path("languages/", include("apps.languages.urls", namespace="languages")),
     path("quizzes/", include("apps.quizzes.urls", namespace="quizzes")),
 
+    # Learn
+    path("learn/", include("apps.learn.urls", namespace="learn")),
+
     # Results
     path("results/", include("apps.results.urls", namespace="results")),
 

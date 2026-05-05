@@ -84,10 +84,22 @@
 
   <!-- ── Exit ── -->
   <div class="flex justify-start items-center">
+    {% if quiz.quiz_type == 'practice' and quiz.topic %}
+    <a href="{{ quiz.topic.get_absolute_url }}" class="btn btn-ghost btn-sm gap-1 text-base-content/40">
+      <span class="material-symbols-rounded text-sm">arrow_back</span>
+      Back to lesson
+    </a>
+    {% elif quiz.quiz_type == 'final' %}
+    <a href="{% url 'learn:language_detail' language_slug=language.slug %}" class="btn btn-ghost btn-sm gap-1 text-base-content/40">
+      <span class="material-symbols-rounded text-sm">arrow_back</span>
+      Learning path
+    </a>
+    {% else %}
     <a href="{% url 'languages:detail' slug=language.slug %}" class="btn btn-ghost btn-sm gap-1 text-base-content/40">
       <span class="material-symbols-rounded text-sm">arrow_back</span>
       Exit
     </a>
+    {% endif %}
   </div>
 
   <!-- ── Progress dots (Alpine x-for) ── -->

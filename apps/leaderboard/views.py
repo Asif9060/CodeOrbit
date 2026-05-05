@@ -1,6 +1,6 @@
 """Leaderboard views."""
 from django.shortcuts import render
-from apps.leaderboard.models import LeaderboardEntry
+from apps.leaderboard.models import LeaderboardEntry, LeaderboardCategory
 from apps.languages.models import Language
 
 
@@ -9,7 +9,7 @@ def leaderboard_index(request):
 
     entries = (
         LeaderboardEntry.objects
-        .filter(language__isnull=True)
+        .filter(language__isnull=True, category=LeaderboardCategory.GENERAL)
         .select_related("user")
         .order_by("rank")[:50]
     )

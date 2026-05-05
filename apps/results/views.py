@@ -8,7 +8,7 @@ from apps.results.models import UserResult
 def result_detail(request, pk):
     result = get_object_or_404(
         UserResult.objects
-        .select_related("quiz__language")
+        .select_related("quiz__language", "quiz__topic")
         .prefetch_related("answers__question__options", "answers__selected_option"),
         pk=pk,
         user=request.user,

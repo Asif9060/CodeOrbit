@@ -2,7 +2,7 @@
 Quizzes service layer.
 Business logic lives here — views call services, services call models.
 """
-from apps.quizzes.models import Quiz, Question
+from apps.quizzes.models import Quiz, Question, QuizType
 
 
 def get_published_quizzes_for_language(language_slug: str):
@@ -10,6 +10,7 @@ def get_published_quizzes_for_language(language_slug: str):
     return Quiz.objects.filter(
         language__slug=language_slug,
         is_published=True,
+        quiz_type=QuizType.GENERAL,
     ).select_related("language").order_by("difficulty", "title")
 
 

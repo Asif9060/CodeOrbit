@@ -57,7 +57,7 @@ def register_view(request):
         else:
             user = User.objects.create_user(username=username, email=email, password=password1)
             login(request, user)
-            messages.success(request, f"Welcome to Quiz CodeX, {user.username}!")
+            messages.success(request, f"Welcome to CodeOrbit, {user.username}!")
             return redirect("core:home")
 
     return render(request, "accounts/register.html", {})

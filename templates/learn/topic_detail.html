@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ topic.title }} — Learn{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 lg:px-8 py-12">
+  <div class="breadcrumbs text-sm text-base-content/40 mb-8">
+    <ul>
+      <li><a href="{% url 'core:home' %}" class="hover:text-primary">Home</a></li>
+      <li><a href="{% url 'learn:index' %}" class="hover:text-primary">Learn</a></li>
+      <li><a href="{% url 'learn:language_detail' language_slug=topic.language.slug %}" class="hover:text-primary">{{ topic.language.name }}</a></li>
+      <li class="text-base-content/70">{{ topic.title }}</li>
+    </ul>
+  </div>
+
+  <div class="rounded-2xl border border-surface-border bg-base-200 p-8 mb-8">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-bold">{{ topic.title|slice:":1" }}</div>
+      <div>
+        <h1 class="text-3xl font-extrabold">{{ topic.title }}</h1>
+        <p class="text-sm text-base-content/50">{{ topic.language.name }} fundamentals</p>
+      </div>
+    </div>
+    <p class="text-base-content/60">{{ topic.summary|default:"Lesson overview" }}</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="rounded-2xl border border-surface-border bg-base-200 p-6">
+        <div class="text-xs text-base-content/40 uppercase tracking-wider mb-3">Lesson</div>
+        {% if topic.content %}
+          <div class="lesson-content text-sm leading-relaxed">
+            {{ lesson_html|safe }}
+          </div>
+        {% else %}
+          <div class="text-sm text-base-content/50">Lesson content coming soon.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="rounded-2xl border border-surface-border bg-base-200 p-6">
+        <div class="text-xs text-base-content/40 uppercase tracking-wider mb-2">Practice</div>
+        {% if practice_quiz and practice_quiz.is_published %}
+        <a href="{% url 'quizzes:take' slug=practice_quiz.slug %}" class="btn btn-primary btn-sm w-full gap-2">
+          <span class="material-symbols-rounded text-sm">play_arrow</span>
+          Start practice quiz
+        </a>
+        {% elif practice_quiz %}
+        <div class="text-xs text-base-content/40">Practice quiz in draft.</div>
+        {% else %}
+        <div class="text-xs text-base-content/40">Practice quiz coming soon.</div>
+        {% endif %}
+
+        {% if progress and progress.last_result %}
+        <div class="mt-3 text-xs text-base-content/40">Last score: {{ progress.last_result.percentage }}%</div>
+        {% endif %}
+      </div>
+
+      <div class="rounded-2xl border border-primary/20 bg-primary/5 p-6">
+        <div class="text-sm font-semibold mb-2">Progress tip</div>
+        <p class="text-xs text-base-content/50">Complete the practice quiz to mark this topic as finished.</p>
+      </div>
+
+      {% if user.is_staff %}
+      <div class="rounded-2xl border border-secondary/20 bg-secondary/5 p-6">
+        <div class="text-xs text-base-content/40 uppercase tracking-wider mb-2">Admin tools</div>
+        <form method="post" action="{% url 'learn:generate_practice_quiz' language_slug=topic.language.slug topic_slug=topic.slug %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-secondary btn-sm w-full gap-2" {% if not can_generate_quiz %}disabled{% endif %}>
+            <span class="material-symbols-rounded text-sm">auto_awesome</span>
+            Generate practice quiz
+          </button>
+        </form>
+        {% if not can_generate_quiz %}
+        <div class="text-xs text-base-content/40 mt-2">Add and publish at least one resource to enable quiz generation.</div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .lesson-content p {
+    margin-bottom: 0.9rem;
+    color: hsl(var(--bc) / 0.78);
+  }
+  .lesson-content a {
+    color: hsl(var(--p));
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .lesson-content code {
+    background: hsl(var(--b3));
+    border: 1px solid hsl(var(--bc) / 0.12);
+    border-radius: 6px;
+    padding: 0.1rem 0.35rem;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85em;
+  }
+  .lesson-heading-lg {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 1.2rem 0 0.6rem;
+  }
+  .lesson-heading {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+  }
+  .lesson-list {
+    margin: 0.4rem 0 1rem 1.2rem;
+    list-style: disc;
+    color: hsl(var(--bc) / 0.75);
+  }
+  .lesson-code {
+    background: hsl(var(--b3));
+    border: 1px solid hsl(var(--bc) / 0.12);
+    border-radius: 14px;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: hsl(var(--bc));
+  }
+  .lesson-callout {
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid hsl(var(--bc) / 0.1);
+    margin: 1rem 0;
+  }
+  .lesson-question {
+    background: hsl(var(--p) / 0.08);
+    border-color: hsl(var(--p) / 0.35);
+  }
+  .lesson-answer {
+    background: hsl(var(--su) / 0.08);
+    border-color: hsl(var(--su) / 0.35);
+  }
+  .lesson-callout-title {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: hsl(var(--bc) / 0.6);
+    margin-bottom: 0.45rem;
+  }
+  .lesson-callout-body p {
+    margin-bottom: 0.6rem;
+  }
+</style>
+{% endblock %}

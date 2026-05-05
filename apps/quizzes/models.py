@@ -13,6 +13,12 @@ class DifficultyLevel(models.TextChoices):
     ADVANCED = "advanced", "Advanced"
 
 
+class QuizType(models.TextChoices):
+    GENERAL = "general", "General"
+    PRACTICE = "practice", "Practice"
+    FINAL = "final", "Final"
+
+
 class QuestionType(models.TextChoices):
     MCQ = "mcq", "Multiple Choice"
     TRUE_FALSE = "true_false", "True / False"
@@ -24,6 +30,8 @@ class Quiz(PublishableModel):
     slug = models.SlugField(max_length=220, unique=True, blank=True)
     language = models.ForeignKey("languages.Language", on_delete=models.CASCADE)
     difficulty = models.CharField(max_length=20, choices=DifficultyLevel.choices, default=DifficultyLevel.BEGINNER)
+    quiz_type = models.CharField(max_length=20, choices=QuizType.choices, default=QuizType.GENERAL)
+    topic = models.ForeignKey("learn.Topic", null=True, blank=True, on_delete=models.SET_NULL, related_name="quizzes")
     description = models.TextField(blank=True)
     time_limit = models.PositiveIntegerField(null=True, blank=True, help_text="Time limit in seconds. Leave blank for no limit.")
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)

@@ -1,0 +1,30 @@
+.editor-toolbar {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.editor-toolbar a,
+.editor-toolbar a i,
+.editor-toolbar a::before {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.editor-toolbar a:hover,
+.editor-toolbar a.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.CodeMirror,
+.CodeMirror-scroll {
+  background: #0f172a;
+  color: #f9fafb;
+  border-color: #1f2937;
+}
+
+.editor-statusbar {
+  background: #111827;
+  border-color: #1f2937;
+  color: #e5e7eb;
+}

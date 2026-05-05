@@ -33,4 +33,5 @@ class Language(PublishableModel):
 
     @property
     def published_quiz_count(self):
-        return self.quiz_set.filter(is_published=True).count()
+        from apps.quizzes.models import QuizType
+        return self.quiz_set.filter(is_published=True, quiz_type=QuizType.GENERAL).count()

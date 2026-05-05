@@ -33,14 +33,14 @@ class QuestionInline(StackedInline):
 
 @admin.register(Quiz)
 class QuizAdmin(ModelAdmin):
-    list_display = ("title", "language", "difficulty", "question_count", "time_limit", "is_published", "created_at")
-    list_filter = ("is_published", "difficulty", "language")
-    search_fields = ("title", "description")
+    list_display = ("title", "language", "quiz_type", "topic", "difficulty", "question_count", "time_limit", "is_published", "created_at")
+    list_filter = ("is_published", "quiz_type", "difficulty", "language", "topic")
+    search_fields = ("title", "description", "topic__title")
     prepopulated_fields = {"slug": ("title",)}
     list_editable = ("is_published",)
     inlines = [QuestionInline]
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ["language"]
+    autocomplete_fields = ["language", "topic"]
 
 
 def _ai_generate_button_html(obj):

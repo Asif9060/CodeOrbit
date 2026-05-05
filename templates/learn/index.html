@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Learn{% endblock %}
+
+{% block content %}
+<section class="relative overflow-hidden px-4 py-16">
+  <div class="absolute -top-24 right-10 w-72 h-72 rounded-full bg-secondary/10 blur-3xl"></div>
+  <div class="absolute top-20 left-0 w-96 h-96 rounded-full bg-primary/10 blur-3xl"></div>
+
+  <div class="max-w-7xl mx-auto relative">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-4">
+          <span class="material-symbols-rounded text-xs">menu_book</span>
+          Learn & Practice
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-4">
+          Learn the Basics,
+          <span class="text-gradient-primary block">Then Test Yourself</span>
+        </h1>
+        <p class="text-base-content/60 text-lg max-w-xl">
+          Follow guided topics per language, finish a practice set for each topic, and unlock the final quiz.
+        </p>
+      </div>
+      <div class="rounded-2xl border border-surface-border bg-base-200/70 p-6">
+        <div class="text-xs uppercase tracking-widest text-base-content/40 mb-2">How it works</div>
+        <ol class="space-y-4 text-sm">
+          <li class="flex gap-3">
+            <span class="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center font-bold">1</span>
+            <div>
+              <div class="font-semibold">Pick a language</div>
+              <div class="text-base-content/50">Start with beginner-friendly topics.</div>
+            </div>
+          </li>
+          <li class="flex gap-3">
+            <span class="w-7 h-7 rounded-lg bg-secondary/15 text-secondary flex items-center justify-center font-bold">2</span>
+            <div>
+              <div class="font-semibold">Learn each topic</div>
+              <div class="text-base-content/50">Read the lesson and take a short practice quiz.</div>
+            </div>
+          </li>
+          <li class="flex gap-3">
+            <span class="w-7 h-7 rounded-lg bg-accent/15 text-accent flex items-center justify-center font-bold">3</span>
+            <div>
+              <div class="font-semibold">Unlock the final quiz</div>
+              <div class="text-base-content/50">Complete all topics to access the final leaderboard.</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="px-4 pb-16">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <h2 class="text-2xl font-bold">Choose a Language</h2>
+        <p class="text-base-content/50">Progress is saved as you complete topic practice quizzes.</p>
+      </div>
+      <a href="{% url 'languages:list' %}" class="btn btn-ghost btn-sm gap-1 text-primary">
+        Browse quizzes
+        <span class="material-symbols-rounded text-sm">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for card in language_cards %}
+      {% with lang=card.language prog=card.progress %}
+      <a href="{% url 'learn:language_detail' language_slug=lang.slug %}"
+         class="rounded-2xl border border-surface-border bg-base-200 p-5 hover:border-primary/40 hover:bg-base-300 transition-all group">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center font-bold text-sm font-mono text-primary">
+            {{ lang.name|slice:":1" }}
+          </div>
+          <div>
+            <div class="font-semibold text-lg">{{ lang.name }}</div>
+            <div class="text-xs text-base-content/40">{{ lang.description|default:"Beginner-friendly topics" }}</div>
+          </div>
+        </div>
+
+        {% if user.is_authenticated %}
+          {% if prog.total %}
+          <div class="text-xs text-base-content/40 mb-2">Progress {{ prog.completed }}/{{ prog.total }} topics</div>
+          <div class="w-full h-2 rounded-full bg-base-300 overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-primary to-secondary" style="width: {{ prog.percent }}%"></div>
+          </div>
+          <div class="mt-2 text-xs text-base-content/40">{{ prog.percent }}% complete</div>
+          {% else %}
+          <div class="text-xs text-base-content/40">Topics coming soon</div>
+          {% endif %}
+        {% else %}
+          <div class="text-xs text-base-content/40">Sign in to track progress</div>
+        {% endif %}
+
+        <div class="mt-4 flex items-center justify-between">
+          <span class="text-xs text-base-content/50">Learn now</span>
+          <span class="material-symbols-rounded text-base text-base-content/40 group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </div>
+      </a>
+      {% endwith %}
+      {% empty %}
+      <div class="col-span-full text-center py-16 text-base-content/40">
+        <span class="material-symbols-rounded text-5xl block mb-3">menu_book</span>
+        No languages available for learning yet.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ language.name }} Learning Path{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+  <div class="breadcrumbs text-sm text-base-content/40 mb-8">
+    <ul>
+      <li><a href="{% url 'core:home' %}" class="hover:text-primary">Home</a></li>
+      <li><a href="{% url 'learn:index' %}" class="hover:text-primary">Learn</a></li>
+      <li class="text-base-content/70">{{ language.name }}</li>
+    </ul>
+  </div>
+
+  <div class="rounded-2xl border border-surface-border bg-base-200 p-8 mb-10 flex flex-col lg:flex-row gap-8 items-start lg:items-center">
+    <div class="flex-1">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium mb-3">
+        <span class="material-symbols-rounded text-xs">track_changes</span>
+        Learning Path
+      </div>
+      <h1 class="text-3xl font-extrabold mb-2">{{ language.name }} Fundamentals</h1>
+      <p class="text-base-content/50">Complete each topic practice set to unlock the final quiz.</p>
+    </div>
+
+    <div class="w-full lg:w-80">
+      <div class="text-xs text-base-content/40 mb-2">Overall progress</div>
+      <div class="w-full h-3 rounded-full bg-base-300 overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-primary to-secondary" style="width: {{ progress.percent }}%"></div>
+      </div>
+      <div class="mt-2 flex items-center justify-between text-xs text-base-content/40">
+        <span>{{ progress.completed }} / {{ progress.total }} topics</span>
+        <span>{{ progress.percent }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="lg:col-span-2 space-y-4">
+      {% for card in topic_cards %}
+      {% with topic=card.topic progress=card.progress practice=card.practice_quiz %}
+      <div class="rounded-2xl border border-surface-border bg-base-200 p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-semibold mb-1">{{ topic.title }}</h3>
+            <p class="text-sm text-base-content/50">{{ topic.summary|default:"Lesson content and practice." }}</p>
+          </div>
+          {% if progress and progress.is_completed %}
+            <span class="badge badge-success gap-1">
+              <span class="material-symbols-rounded text-xs">check_circle</span>
+              Completed
+            </span>
+          {% else %}
+            <span class="badge badge-ghost">In progress</span>
+          {% endif %}
+        </div>
+
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <a href="{{ topic.get_absolute_url }}" class="btn btn-outline btn-sm gap-1">
+            <span class="material-symbols-rounded text-sm">menu_book</span>
+            View lesson
+          </a>
+          {% if practice and practice.is_published %}
+          <a href="{% url 'quizzes:take' slug=practice.slug %}" class="btn btn-primary btn-sm gap-1">
+            <span class="material-symbols-rounded text-sm">play_arrow</span>
+            Start practice
+          </a>
+          {% elif practice %}
+          <span class="text-xs text-base-content/40">Practice quiz in draft</span>
+          {% else %}
+          <span class="text-xs text-base-content/40">Practice quiz coming soon</span>
+          {% endif %}
+
+          {% if progress and progress.last_result %}
+          <span class="text-xs text-base-content/40">Last score: {{ progress.last_result.percentage }}%</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endwith %}
+      {% empty %}
+      <div class="rounded-2xl border border-surface-border bg-base-200 p-10 text-center text-base-content/40">
+        No topics available yet for this language.
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="space-y-4">
+      <div class="rounded-2xl border border-surface-border bg-base-200 p-6">
+        <div class="flex items-center gap-2 text-sm text-base-content/40 mb-2">
+          <span class="material-symbols-rounded text-sm">emoji_events</span>
+          Final Quiz
+        </div>
+        <h3 class="text-lg font-semibold mb-2">{{ language.name }} Final</h3>
+        <p class="text-sm text-base-content/50 mb-4">Complete all topics to unlock the final assessment.</p>
+
+        {% if final_unlocked and final_quiz and final_quiz.is_published %}
+        <a href="{% url 'quizzes:take' slug=final_quiz.slug %}" class="btn btn-primary btn-sm w-full gap-2">
+          <span class="material-symbols-rounded text-sm">play_arrow</span>
+          Take final quiz
+        </a>
+        <a href="{% url 'learn:final_leaderboard' language_slug=language.slug %}" class="btn btn-ghost btn-sm w-full gap-2 mt-2">
+          <span class="material-symbols-rounded text-sm">leaderboard</span>
+          View leaderboard
+        </a>
+        {% elif final_quiz %}
+        <div class="text-xs text-base-content/40">Final quiz is in draft. Check back soon.</div>
+        {% else %}
+        <div class="text-xs text-base-content/40">Final quiz not created yet.</div>
+        {% endif %}
+
+        {% if not final_unlocked %}
+        <div class="mt-3 text-xs text-base-content/40">Unlock at 100% completion.</div>
+        {% endif %}
+      </div>
+
+      <div class="rounded-2xl border border-primary/20 bg-primary/5 p-6">
+        <div class="text-sm font-semibold mb-2">Need motivation?</div>
+        <p class="text-xs text-base-content/50 mb-4">Finish the path to see your name on the final leaderboard.</p>
+        <a href="{% url 'leaderboard:index' %}" class="btn btn-outline btn-sm w-full">See global leaderboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -2,12 +2,14 @@
 import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 
-from apps.quizzes.models import Quiz, Option
+from apps.quizzes.models import Quiz, Option, QuizType
+from apps.learn.services import get_language_progress
 from apps.results.services import create_quiz_attempt, submit_answer, complete_quiz
 from apps.results.models import UserResult
 
@@ -20,6 +22,12 @@ def quiz_take(request, slug):
         slug=slug,
         is_published=True,
     )
+
+    if quiz.quiz_type == QuizType.FINAL:
+        progress = get_language_progress(request.user, quiz.language)
+        if progress["total"] == 0 or progress["completed"] < progress["total"]:
+            messages.warning(request, "Complete all topics to unlock the final quiz.")
+            return redirect("learn:language_detail", language_slug=quiz.language.slug)
 
     # Create a new attempt for this user
     result = create_quiz_attempt(request.user, quiz)

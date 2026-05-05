@@ -13,7 +13,7 @@ class UserAnswerInline(TabularInline):
 @admin.register(UserResult)
 class UserResultAdmin(ModelAdmin):
     list_display = ("user", "quiz", "score", "total_points", "percentage", "is_completed", "started_at")
-    list_filter = ("is_completed", "quiz__language", "quiz__difficulty")
+    list_filter = ("is_completed", "quiz__language", "quiz__difficulty", "quiz__quiz_type")
     search_fields = ("user__username", "quiz__title")
     readonly_fields = ("user", "quiz", "score", "total_points", "started_at", "completed_at")
     inlines = [UserAnswerInline]

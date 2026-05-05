@@ -26,22 +26,22 @@
         </div>
 
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-          Master Coding —
-          <span class="text-gradient-primary block">One Quiz at a Time</span>
+          Learn Coding —
+          <span class="text-gradient-primary block">Then Prove It</span>
         </h1>
 
         <p class="text-base-content/60 text-lg mb-8 max-w-lg leading-relaxed">
-          Test your knowledge across 20 programming languages. From Python to Rust, level up your skills with 50 targeted quizzes per language.
+          Learn the fundamentals topic by topic, then sharpen your skills with practice sessions and final quizzes.
         </p>
 
         <div class="flex flex-wrap gap-3 hero-cta-buttons">
-          <a href="{% url 'languages:list' %}" class="btn btn-primary btn-lg gap-2">
+          <a href="{% url 'learn:index' %}" class="btn btn-primary btn-lg gap-2">
             <span class="material-symbols-rounded">rocket_launch</span>
-            Start a Quiz
+            Start Learning
           </a>
-          <a href="{% url 'leaderboard:index' %}" class="btn btn-outline btn-lg gap-2">
-            <span class="material-symbols-rounded">leaderboard</span>
-            Leaderboard
+          <a href="{% url 'languages:list' %}" class="btn btn-outline btn-lg gap-2">
+            <span class="material-symbols-rounded">explore</span>
+            Browse Quizzes
           </a>
         </div>
       </div>
@@ -126,8 +126,7 @@
       <a href="{% url 'languages:detail' slug=lang.slug %}" class="card-language group">
         <!-- Icon + Name -->
         <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm font-mono text-white shrink-0"
-               style="background-color: {{ lang.color }}20; border: 1px solid {{ lang.color }}40; color: {{ lang.color }};">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm font-mono text-primary shrink-0 bg-primary/10 border border-primary/30">
             {{ lang.icon_char }}
           </div>
           <div>

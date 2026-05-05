@@ -147,6 +147,25 @@
       <span class="material-symbols-rounded">restart_alt</span>
       Retry quiz
     </a>
+    {% if result.quiz.quiz_type == 'practice' and result.quiz.topic %}
+    <a href="{{ result.quiz.topic.get_absolute_url }}" class="btn btn-outline gap-2">
+      <span class="material-symbols-rounded">menu_book</span>
+      Back to lesson
+    </a>
+    <a href="{% url 'learn:language_detail' language_slug=result.quiz.language.slug %}" class="btn btn-ghost gap-2">
+      <span class="material-symbols-rounded">track_changes</span>
+      Learning path
+    </a>
+    {% elif result.quiz.quiz_type == 'final' %}
+    <a href="{% url 'learn:final_leaderboard' language_slug=result.quiz.language.slug %}" class="btn btn-outline gap-2">
+      <span class="material-symbols-rounded">leaderboard</span>
+      Final leaderboard
+    </a>
+    <a href="{% url 'learn:language_detail' language_slug=result.quiz.language.slug %}" class="btn btn-ghost gap-2">
+      <span class="material-symbols-rounded">track_changes</span>
+      Learning path
+    </a>
+    {% else %}
     <a href="{% url 'languages:list' %}" class="btn btn-outline gap-2">
       <span class="material-symbols-rounded">explore</span>
       Try another quiz
@@ -155,6 +174,7 @@
       <span class="material-symbols-rounded">leaderboard</span>
       Leaderboard
     </a>
+    {% endif %}
   </div>
 
 </div>
