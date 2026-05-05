@@ -165,6 +165,12 @@ class QuestionAdmin(ModelAdmin):
         }),
     )
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if "text" in form.base_fields:
+            form.base_fields["text"].label = "Question title"
+        return form
+
     def ai_generate_button(self, obj):
         return _ai_generate_button_html(obj)
     ai_generate_button.short_description = ""
